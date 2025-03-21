@@ -69,4 +69,58 @@ export class UsersController {
       handleException(error);
     }
   }
+
+  @Post('forgot-password')
+  @ApiOperation({ summary: 'Request password reset' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          example: 'user@example.com',
+          description: 'The email of the user requesting password reset',
+        },
+      },
+    },
+  })
+  async forgotPassword(@Body('email') email: string) {
+    try {
+      await this.usersService.forgotPassword(email);
+      return { message: 'Password reset email sent successfully' };
+    } catch (error) {
+      handleException(error);
+    }
+  }
+
+  @Post('reset-password')
+  @ApiOperation({ summary: 'Reset password' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        token: {
+          type: 'string',
+          example: 'reset-token',
+          description: 'The password reset token',
+        },
+        newPassword: {
+          type: 'string',
+          example: 'newPassword123',
+          description: 'The new password',
+        },
+      },
+    },
+  })
+  async resetPassword(
+    @Body('token') token: string,
+    @Body('newPassword') newPassword: string,
+  ) {
+    try {
+      await this.usersService.resetPassword(token, newPassword);
+      return { message: 'Password reset successfully' };
+    } catch (error) {
+      handleException(error);
+    }
+  }
 }

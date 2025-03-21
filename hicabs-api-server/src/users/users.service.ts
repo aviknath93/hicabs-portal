@@ -10,6 +10,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { SessionsService } from 'src/sessions/sessions.service';
 import * as jwt from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
 
 @Injectable()
 export class UsersService {
@@ -197,7 +198,7 @@ export class UsersService {
     if (!user) {
       throw new HttpException(
         {
-          message: 'NA',
+          message: 'User not found',
           errors: [
             {
               field: 'userId',
@@ -332,5 +333,228 @@ export class UsersService {
     );
 
     return token;
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    if (!email) {
+      throw new HttpException(
+        {
+          message: 'Validation failed',
+          errors: [
+            {
+              field: 'email',
+              constraints: {
+                notFound: 'Invalid email',
+              },
+            },
+          ],
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const user = await this.userRepository.findOne({ where: { email } });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          message: 'User not found',
+          errors: [
+            {
+              field: 'email',
+              constraints: {
+                notFound: 'User not found',
+              },
+            },
+          ],
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const jwtSecret = this.configService.get<string>('JWT_SECRET');
+    if (!jwtSecret) {
+      throw new HttpException(
+        {
+          message: 'Validation failed',
+          errors: [
+            {
+              field: 'configuration',
+              constraints: {
+                missingSecret:
+                  'JWT_SECRET is not defined in the environment variables.',
+              },
+            },
+          ],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const resetToken: string = jwt.sign({ userId: user.userId }, jwtSecret, {
+      expiresIn: '1h',
+    });
+
+    // Send reset token via email
+    await this.sendResetPasswordEmail(user.email, resetToken);
+  }
+
+  async sendResetPasswordEmail(email: string, token: string) {
+    const emailUser = this.configService.get<string>('EMAIL_AUTH_USER');
+    const emailPass = this.configService.get<string>('EMAIL_AUTH_PASS');
+
+    if (!emailUser || !emailPass) {
+      throw new HttpException(
+        {
+          message: 'Configuration error',
+          errors: [
+            {
+              field: 'NA',
+              constraints: {
+                missing: 'Email configuration is missing',
+              },
+            },
+          ],
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: emailUser,
+        pass: emailPass,
+      },
+    });
+
+    const subject = 'HiCabs - Password Reset';
+    const html = `<p>Click <a href="http://yourapp.com/reset-password?token=${token}">here</a> to reset your password.</p>`;
+
+    const mailOptions = {
+      from: emailUser,
+      to: email,
+      subject: subject,
+      html: html,
+    };
+
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (error) {
+      throw new HttpException(
+        {
+          message: 'Email sending failed',
+          errors: [
+            {
+              field: 'NA',
+              constraints: {
+                send: 'Failed to send email',
+              },
+            },
+          ],
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    try {
+      const jwtSecret = this.configService.get<string>('JWT_SECRET');
+      if (!jwtSecret) {
+        throw new HttpException(
+          {
+            message: 'Validation failed',
+            errors: [
+              {
+                field: 'configuration',
+                constraints: {
+                  missingSecret:
+                    'JWT_SECRET is not defined in the environment variables.',
+                },
+              },
+            ],
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      let decoded;
+      try {
+        decoded = jwt.verify(token, jwtSecret);
+      } catch (err) {
+        throw new HttpException(
+          {
+            message: 'Token verification failed',
+            errors: [
+              {
+                field: 'token',
+                constraints: {
+                  invalid: 'Invalid or expired token',
+                },
+              },
+            ],
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      // Check if decoded is of type JwtPayload
+      if (!(decoded as JwtPayload).userId) {
+        throw new HttpException(
+          {
+            message: 'Invalid token',
+            errors: [
+              {
+                field: 'token',
+                constraints: {
+                  invalid: 'Token is not a valid JWT payload',
+                },
+              },
+            ],
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const userId = (decoded as JwtPayload).userId;
+      const user = await this.userRepository.findOne({ where: { userId } });
+
+      if (!user) {
+        throw new HttpException(
+          {
+            message: 'User not found',
+            errors: [
+              {
+                field: 'userId',
+                constraints: {
+                  notFound: 'User not found',
+                },
+              },
+            ],
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      await this.passwordsService.update(user, hashedPassword);
+    } catch (error) {
+      throw new HttpException(
+        {
+          message: 'Token verification failed',
+          errors: [
+            {
+              field: 'token',
+              constraints: {
+                invalid: 'Invalid or expired token',
+              },
+            },
+          ],
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }
