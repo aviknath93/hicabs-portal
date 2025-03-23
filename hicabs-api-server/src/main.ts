@@ -9,7 +9,21 @@ import helmet from 'helmet';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // app.use(
+  //   helmet({
+  //     contentSecurityPolicy: {
+  //       directives: {
+  //         defaultSrc: [`'self'`],
+  //         styleSrc: [`'self'`, `'unsafe-inline'`],
+  //         imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
+  //         scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+  //       },
+  //     },
+  //   }),
+  // );
+
   app.use(helmet());
+
   app.use(rateLimitConfig);
 
   // Enable CORS

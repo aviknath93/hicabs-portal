@@ -1,10 +1,15 @@
 import { Controller, Post, Body, Param } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { handleException } from '../utils/exception-handler.util';
-import { LoginUserDto } from './dto/login-user.dto';
-
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -55,16 +60,6 @@ export class UsersController {
     try {
       await this.usersService.resendVerificationEmail(userId);
       return { message: 'Verification email sent successfully' };
-    } catch (error) {
-      handleException(error);
-    }
-  }
-
-  @Post('login')
-  @ApiOperation({ summary: 'Login user' })
-  async login(@Body() loginUserDto: LoginUserDto) {
-    try {
-      return await this.usersService.login(loginUserDto);
     } catch (error) {
       handleException(error);
     }
