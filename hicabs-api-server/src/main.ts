@@ -3,9 +3,14 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe, HttpException, HttpStatus } from '@nestjs/common';
 import { AllExceptionsFilter } from './filters/all-exceptions.filter'; // Import the custom exception filter
+import { rateLimitConfig } from './config/rate-limit.config';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(helmet());
+  app.use(rateLimitConfig);
 
   // Enable CORS
   app.enableCors();
