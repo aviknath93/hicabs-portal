@@ -3,6 +3,9 @@ import { Repository } from 'typeorm';
 import { Profile } from './profile.entity';
 import { User } from '../users/user.entity';
 import { ProfileResponseDto } from './dto/profile-response.dto';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as sharp from 'sharp';
 
 @Injectable()
 export class ProfilesService {
@@ -12,9 +15,7 @@ export class ProfilesService {
   ) {}
 
   async create(user: User): Promise<Profile> {
-    const profile = this.profileRepository.create({
-      user,
-    });
+    const profile = this.profileRepository.create({ user });
     return this.profileRepository.save(profile);
   }
 
@@ -39,6 +40,55 @@ export class ProfilesService {
       contactCountryCode: profile.contactCountryCode,
       contact: profile.contact,
       contactVerified: profile.contactVerified,
+    };
+  }
+
+  async updateProfileImage(
+    userId: string,
+    file: Express.Multer.File,
+  ): Promise<{ message: string; profileImageUrl: string }> {
+    const profile = await this.profileRepository.findOne({
+      where: { user: { userId } },
+      relations: ['user'],
+    });
+
+    if (!profile) throw new NotFoundException('Profile not found');
+
+    // Delete old image if exists
+    if (profile.profileImageUrl) {
+      const oldImagePath = path.join(
+        __dirname,
+        '../../',
+        profile.profileImageUrl,
+      );
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
+      }
+    }
+
+    // Compress using sharp
+    const compressedFilename = `${Date.now()}.webp`;
+    const compressedPath = path.join(
+      'uploads',
+      'profileImages',
+      compressedFilename,
+    );
+
+    await sharp(file.path)
+      .resize(500) // Optional resize
+      .jpeg({ quality: 80 })
+      .toFile(compressedPath);
+
+    // Delete original uncompressed file
+    fs.unlinkSync(file.path);
+
+    // Save new image path in DB
+    profile.profileImageUrl = compressedPath;
+    await this.profileRepository.save(profile);
+
+    return {
+      message: 'Profile image updated successfully',
+      profileImageUrl: compressedPath,
     };
   }
 }
