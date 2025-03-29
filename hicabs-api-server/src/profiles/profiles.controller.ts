@@ -8,6 +8,8 @@ import {
   UseInterceptors,
   BadRequestException,
   UseFilters,
+  Put,
+  Body,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,6 +18,7 @@ import {
   ApiBearerAuth,
   ApiConsumes,
   ApiBody,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { ProfilesService } from './profiles.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -26,6 +29,7 @@ import { diskStorage, MulterError } from 'multer';
 import * as path from 'path';
 import * as fs from 'fs';
 import { MulterExceptionFilter } from 'src/filters/multer-exception.filter';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @ApiTags('profiles')
 @ApiBearerAuth('access-token')
@@ -49,12 +53,13 @@ export class ProfilesController {
 
   @UseGuards(AuthGuard('jwt'))
   @UseFilters(MulterExceptionFilter)
-  @Post('upload-image')
+  @Put('upload-image')
   @UseInterceptors(
     FileInterceptor('file', {
       limits: { fileSize: 3 * 1024 * 1024 }, // 3MB
       fileFilter: (req, file, cb) => {
         const allowedMimeTypes = [
+          'image/jpg',
           'image/jpeg',
           'image/png',
           'image/webp',
@@ -64,7 +69,7 @@ export class ProfilesController {
         if (!allowedMimeTypes.includes(file.mimetype)) {
           const err = new MulterError('LIMIT_UNEXPECTED_FILE');
           err.message =
-            'Only JPEG, PNG, WebP, or HEIC image files are allowed!';
+            'Only JPG, JPEG, PNG, WebP, or HEIC image files are allowed!';
           return cb(err, false);
         }
         cb(null, true);
@@ -110,7 +115,32 @@ export class ProfilesController {
       const userId = req.user.userId;
       return await this.profilesService.updateProfileImage(userId, file);
     } catch (error) {
-      console.log('error-=-=-=', error);
+      handleException(error);
+    }
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Put('update-details')
+  @ApiOperation({ summary: 'Update profile details' })
+  @ApiBody({ type: UpdateProfileDto })
+  @ApiOkResponse({
+    description: 'Profile updated successfully',
+    schema: {
+      example: {
+        message: 'Profile updated successfully',
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async updateProfileDetails(
+    @Req() req: RequestWithUser,
+    @Body() updateDto: UpdateProfileDto,
+  ) {
+    try {
+      const userId = req.user.userId;
+      return await this.profilesService.updateProfileDetails(userId, updateDto);
+    } catch (error) {
       handleException(error);
     }
   }

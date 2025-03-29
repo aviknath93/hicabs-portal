@@ -27,7 +27,7 @@ export class Profile {
   @Column({ nullable: true })
   contactCountryCode: number;
 
-  @Column({ nullable: true, unique: true })
+  @Column({ type: 'bigint', nullable: true, unique: true })
   contact: number;
 
   @Column({ nullable: true })

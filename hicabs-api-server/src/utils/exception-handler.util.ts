@@ -1,28 +1,52 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 export function handleException(error: unknown): never {
-  const customError = error as HttpException;
-  const response = customError.getResponse();
-  let message = 'An unexpected error occurred';
-  let errors: any[] = [];
+  if (error instanceof HttpException) {
+    const response = error.getResponse?.();
+    let message = 'An unexpected error occurred';
+    let errors: any[] = [];
 
-  if (typeof response === 'object' && response !== null) {
-    const responseObj = response as { message?: string; errors?: any[] };
-    if (typeof responseObj.message === 'string') {
-      message = responseObj.message;
+    if (typeof response === 'object' && response !== null) {
+      const responseObj = response as {
+        message?: string | string[];
+        errors?: any[];
+      };
+
+      if (typeof responseObj.message === 'string') {
+        message = responseObj.message;
+      } else if (Array.isArray(responseObj.message)) {
+        errors = responseObj.message;
+      }
+
+      if (Array.isArray(responseObj.errors)) {
+        errors = responseObj.errors;
+      }
+    } else if (typeof response === 'string') {
+      message = response;
     }
-    if (Array.isArray(responseObj.errors)) {
-      errors = responseObj.errors;
-    }
+
+    throw new HttpException(
+      { message, errors },
+      error.getStatus() || HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
 
-  const errorResponse = {
-    message,
-    errors,
-  };
+  if (error instanceof Error) {
+    throw new HttpException(
+      {
+        message: error.message || 'An unexpected error occurred',
+        errors: [],
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
 
-  throw new HttpException(
-    errorResponse,
-    customError.getStatus() || HttpStatus.INTERNAL_SERVER_ERROR,
-  );
+  throw new InternalServerErrorException({
+    message: 'Something went wrong',
+    errors: [],
+  });
 }

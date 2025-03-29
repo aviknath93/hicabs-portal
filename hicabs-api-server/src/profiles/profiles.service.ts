@@ -6,6 +6,7 @@ import { ProfileResponseDto } from './dto/profile-response.dto';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as sharp from 'sharp';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class ProfilesService {
@@ -90,5 +91,32 @@ export class ProfilesService {
       message: 'Profile image updated successfully',
       profileImageUrl: compressedPath,
     };
+  }
+
+  async updateProfileDetails(
+    userId: string,
+    updateDto: UpdateProfileDto,
+  ): Promise<{ message: string }> {
+    const profile = await this.profileRepository.findOne({
+      where: { user: { userId } },
+      relations: ['user'],
+    });
+
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+
+    const { vendorName, bio, contactCountryCode, contact } = updateDto;
+
+    if (vendorName) profile.user.vendorName = vendorName;
+    if (bio) profile.bio = bio;
+    if (contactCountryCode)
+      profile.contactCountryCode = Number(contactCountryCode);
+    if (contact) profile.contact = Number(contact);
+
+    await this.profileRepository.save(profile);
+    await this.profileRepository.manager.save(profile.user);
+
+    return { message: 'Profile updated successfully' };
   }
 }
