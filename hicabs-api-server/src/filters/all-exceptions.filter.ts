@@ -23,7 +23,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let message = 'An error occurred';
     const errors: ErrorDetail[] = [];
 
-    // 1. If it's an HttpException (e.g., BadRequestException, PayloadTooLargeException)
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const responseContent = exception.getResponse();
@@ -37,8 +36,17 @@ export class AllExceptionsFilter implements ExceptionFilter {
       ) {
         const res = responseContent as any;
 
-        // Validation errors or class-validator style
-        if (Array.isArray(res.message)) {
+        // Handle validation errors
+        if (Array.isArray(res.errors)) {
+          res.errors.forEach((error: any) => {
+            errors.push({
+              field: error.field,
+              constraints: error.constraints,
+              message: error.message,
+            });
+          });
+          message = res.message || message;
+        } else if (Array.isArray(res.message)) {
           message = res.message[0];
           res.message.forEach((msg: string) => errors.push({ message: msg }));
         } else if (typeof res.message === 'string') {
@@ -46,23 +54,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
           errors.push({ message: res.message });
         }
 
-        // Multer and others might include `error` key
         if (res.error && !errors.length) {
           errors.push({ message: res.error });
           message = res.error;
         }
       }
-    }
-
-    // 2. If it's a normal JS Error (like thrown manually or multer raw error)
-    else if (exception instanceof Error) {
+    } else if (exception instanceof Error) {
       message = exception.message || message;
       errors.push({ message });
-    }
-
-    // 3. Log the unknown error structure
-    else {
-      console.error('⚠️ Unknown error structure:', exception);
+    } else {
+      console.error('Unknown error structure:', exception);
     }
 
     response.status(status).json({
