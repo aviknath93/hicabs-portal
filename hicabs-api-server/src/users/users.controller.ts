@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiOperation,
@@ -9,6 +16,8 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { handleException } from '../utils/exception-handler.util';
+import { UserType } from './user.entity';
+
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
@@ -18,6 +27,30 @@ export class UsersController {
   @ApiOperation({ summary: 'Register user' })
   async register(@Body() createUserDto: CreateUserDto) {
     try {
+      if (
+        ![UserType.VENDOR, UserType.DRIVER].includes(createUserDto.userType)
+      ) {
+        throw new HttpException(
+          'Only VENDOR and DRIVER can register using this endpoint',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      return await this.usersService.register(createUserDto);
+    } catch (error) {
+      handleException(error);
+    }
+  }
+
+  @Post('register-admin')
+  @ApiOperation({ summary: 'Register admin' })
+  async registerAdmin(@Body() createUserDto: CreateUserDto) {
+    try {
+      if (createUserDto.userType !== UserType.ADMIN) {
+        throw new HttpException(
+          'Only ADMIN can register using this endpoint',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       return await this.usersService.register(createUserDto);
     } catch (error) {
       handleException(error);

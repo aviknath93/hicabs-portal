@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { PasswordsModule } from './passwords/passwords.module';
 import { DriversModule } from './drivers/drivers.module';
+import { VendorsModule } from './vendors/vendors.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { DriversModule } from './drivers/drivers.module';
     ProfilesModule,
     PasswordsModule,
     DriversModule,
+    VendorsModule,
   ],
   controllers: [],
   providers: [],

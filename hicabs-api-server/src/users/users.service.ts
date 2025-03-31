@@ -445,6 +445,12 @@ export class UsersService {
     });
   }
 
+  async findUserById(userId: string): Promise<User | null> {
+    return this.userRepository.findOne({
+      where: { userId },
+    });
+  }
+
   async createOrUpdateUserSession(
     userId: string,
     ipAddress: string,
