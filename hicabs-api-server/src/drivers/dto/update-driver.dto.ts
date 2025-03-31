@@ -19,7 +19,7 @@ export class UpdateDriverDto {
   name?: string;
 
   @ApiPropertyOptional({
-    example: CarType.FIVE_SEATER,
+    example: CarType.STANDARD,
     description: 'The type of car. Must be one of the defined car types.',
     enum: CarType,
   })

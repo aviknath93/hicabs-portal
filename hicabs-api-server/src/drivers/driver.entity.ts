@@ -9,8 +9,9 @@ import {
 import { IsString, IsBoolean, IsEnum } from 'class-validator';
 
 export enum CarType {
-  FIVE_SEATER = '5 seater',
-  SEVEN_SEATER = '7 seater',
+  STANDARD = 'STANDARD',
+  PEOPLE_CARRIER = 'PEOPLE_CARRIER',
+  LARGE_PEOPLE_CARRIER = 'LARGE_PEOPLE_CARRIER',
   // Add more car types as needed
 }
 

@@ -12,7 +12,7 @@ export class CreateDriverDto {
   name: string;
 
   @ApiProperty({
-    example: CarType.FIVE_SEATER,
+    example: CarType.STANDARD,
     description: 'The type of car. Must be one of the defined car types.',
     enum: CarType,
   })
