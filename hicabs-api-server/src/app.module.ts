@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { PasswordsModule } from './passwords/passwords.module';
+import { DriversModule } from './drivers/drivers.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { PasswordsModule } from './passwords/passwords.module';
     AuthModule,
     ProfilesModule,
     PasswordsModule,
+    DriversModule,
   ],
   controllers: [],
   providers: [],
