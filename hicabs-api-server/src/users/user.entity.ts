@@ -23,7 +23,7 @@ export class User {
 
   @Column()
   @IsString()
-  vendorName: string;
+  name: string;
 
   @Column({ unique: true })
   @IsEmail()

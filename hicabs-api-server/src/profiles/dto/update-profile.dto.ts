@@ -8,7 +8,7 @@ export class UpdateProfileDto {
   })
   @IsOptional()
   @IsString()
-  vendorName?: string;
+  name?: string;
 
   @ApiPropertyOptional({
     example: 'We provide top-class travel services',

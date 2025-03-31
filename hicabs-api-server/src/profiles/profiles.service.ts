@@ -33,7 +33,7 @@ export class ProfilesService {
     return {
       profileId: profile.profileId,
       user: {
-        vendorName: profile.user.vendorName,
+        name: profile.user.name,
         email: profile.user.email,
         userType: profile.user.userType,
       },
@@ -107,9 +107,9 @@ export class ProfilesService {
       throw new NotFoundException('Profile not found');
     }
 
-    const { vendorName, bio, contactCountryCode, contact } = updateDto;
+    const { name, bio, contactCountryCode, contact } = updateDto;
 
-    if (vendorName) profile.user.vendorName = vendorName;
+    if (name) profile.user.name = name;
     if (bio) profile.bio = bio;
     if (contactCountryCode)
       profile.contactCountryCode = Number(contactCountryCode);

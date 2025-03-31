@@ -23,8 +23,7 @@ export class UsersService {
   ) {}
 
   async register(createUserDto: CreateUserDto): Promise<{ userId: string }> {
-    const { email, password, confirmPassword, vendorName, userType } =
-      createUserDto;
+    const { email, password, confirmPassword, name, userType } = createUserDto;
 
     if (password !== confirmPassword) {
       throw new HttpException(
@@ -67,7 +66,7 @@ export class UsersService {
 
     const user = this.userRepository.create({
       email,
-      vendorName,
+      name,
       userType,
       emailVerificationOtp,
     });

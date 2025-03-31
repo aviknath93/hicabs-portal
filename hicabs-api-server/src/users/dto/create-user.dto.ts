@@ -15,7 +15,7 @@ export class CreateUserDto {
   })
   @IsNotEmpty({ message: 'Vendor name is required' })
   @IsString()
-  vendorName: string;
+  name: string;
 
   @ApiProperty({
     example: 'vendor@example.com',

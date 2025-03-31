@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ProfileUserDto {
   @ApiProperty()
-  vendorName: string;
+  name: string;
 
   @ApiProperty()
   email: string;
