@@ -7,6 +7,9 @@ export class ProfileUserDto {
 
   @ApiProperty()
   email: string;
+
+  @ApiProperty()
+  userType: string;
 }
 
 export class ProfileResponseDto {

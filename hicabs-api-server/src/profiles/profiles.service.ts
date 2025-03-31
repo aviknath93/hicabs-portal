@@ -35,6 +35,7 @@ export class ProfilesService {
       user: {
         vendorName: profile.user.vendorName,
         email: profile.user.email,
+        userType: profile.user.userType,
       },
       bio: profile.bio,
       profileImageUrl: profile.profileImageUrl,
