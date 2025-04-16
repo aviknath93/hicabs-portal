@@ -15,7 +15,6 @@ export default function CustomDialog({
   content,
   maxWidth = "sm",
   fullWidth = true,
-  email,
 }) {
   return (
     <Dialog
@@ -27,7 +26,7 @@ export default function CustomDialog({
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          An OTP has been sent to the email address: {email}
+          An OTP has been sent to the given email address
         </DialogContentText>
         <Box sx={{ mt: 2 }}>{content}</Box>
       </DialogContent>

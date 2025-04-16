@@ -43,6 +43,7 @@ export class AuthService {
       throw new HttpException(
         {
           message: 'Validation failed',
+          userId: user.userId,
           errors: [
             {
               field: 'email',
@@ -65,6 +66,7 @@ export class AuthService {
       throw new HttpException(
         {
           message: 'Validation failed',
+          userId: user.userId,
           errors: [
             {
               field: 'NA',

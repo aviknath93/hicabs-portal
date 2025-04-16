@@ -9,11 +9,13 @@ export function handleException(error: unknown): never {
     const response = error.getResponse?.();
     let message = 'An unexpected error occurred';
     let errors: any[] = [];
+    const additionalProperties: Record<string, any> = {};
 
     if (typeof response === 'object' && response !== null) {
       const responseObj = response as {
         message?: string | string[];
         errors?: any[];
+        [key: string]: any;
       };
 
       if (typeof responseObj.message === 'string') {
@@ -25,12 +27,18 @@ export function handleException(error: unknown): never {
       if (Array.isArray(responseObj.errors)) {
         errors = responseObj.errors;
       }
+
+      for (const key in responseObj) {
+        if (key !== 'message' && key !== 'errors') {
+          additionalProperties[key] = responseObj[key];
+        }
+      }
     } else if (typeof response === 'string') {
       message = response;
     }
 
     throw new HttpException(
-      { message, errors },
+      { message, errors, ...additionalProperties },
       error.getStatus() || HttpStatus.INTERNAL_SERVER_ERROR,
     );
   }

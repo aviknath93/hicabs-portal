@@ -50,6 +50,16 @@ const useStore = create((set) => ({
       throw error;
     }
   },
+  forgotPassword: async (email) => {
+    try {
+      const response = await RequestAPI("users/forgot-password", "POST", {
+        email,
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
   navigateTo: (navigate, path) => {
     navigate(path);
   },

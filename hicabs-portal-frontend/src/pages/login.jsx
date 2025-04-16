@@ -5,6 +5,8 @@ import useStore from "../utils/store";
 import useAlertStore from "../utils/alert-store";
 import consts from "../utils/constants.json";
 import InputText from "../components/shared/form-components/input-text";
+import InputNumber from "../components/shared/form-components/input-number";
+import CustomDialog from "../components/shared/ui-components/custom-dialog";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -13,8 +15,18 @@ export default function Login() {
   });
 
   const [errors, setErrors] = useState({});
+  const [otp, setOtp] = useState("");
+  const [isOtpDialogOpen, setIsOtpDialogOpen] = useState(false);
+  const [isForgotPasswordDialogOpen, setIsForgotPasswordDialogOpen] =
+    useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [userId, setUserId] = useState(null);
+
   const getIpAddress = useStore((state) => state.getIpAddress);
   const login = useStore((state) => state.login);
+  const verifyEmail = useStore((state) => state.verifyEmail);
+  const forgotPassword = useStore((state) => state.forgotPassword);
+  const resendVerification = useStore((state) => state.resendVerification);
   const navigate = useNavigate();
   const navigateTo = useStore((state) => state.navigateTo);
   const { setAlert } = useAlertStore();
@@ -55,21 +67,84 @@ export default function Login() {
         });
 
         setAlert({ severity: "success", message: "Login successful!" });
-        // Navigate to the dashboard or home page
         navigateTo(navigate, consts["paths"]["dashboard"]);
       } catch (error) {
         if (error.errors) {
-          const errorMessage = error.errors.map(
-            (err) =>
-              `${err.field}: ${Object.values(err.constraints).join(", ")}`
+          const notVerifiedError = error.errors.find(
+            (err) => err.constraints.notVerified
           );
-          setAlert({ severity: "error", message: errorMessage });
+          if (notVerifiedError) {
+            setUserId(error.userId);
+            setIsOtpDialogOpen(true);
+          } else {
+            const errorMessage = error.errors.map(
+              (err) =>
+                `${err.field}: ${Object.values(err.constraints).join(", ")}`
+            );
+            setAlert({ severity: "error", message: errorMessage });
+          }
         } else {
           setAlert({ severity: "error", message: error.message });
         }
       }
     } else {
       setErrors(validationErrors);
+    }
+  };
+
+  const handleOtpChange = (event) => {
+    const value = event.target.value;
+    if (/^\d*$/.test(value)) {
+      setOtp(value);
+    }
+  };
+
+  const handleOtpSubmit = async () => {
+    if (!otp.trim()) {
+      setAlert({ severity: "error", message: "OTP is required" });
+      return;
+    }
+
+    try {
+      await verifyEmail(userId, parseInt(otp.trim()));
+      setAlert({
+        severity: "success",
+        message: "Email verified successfully!",
+      });
+      setIsOtpDialogOpen(false);
+    } catch (error) {
+      setAlert({ severity: "error", message: error.message });
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      await resendVerification(userId);
+      setAlert({ severity: "success", message: "OTP resent successfully!" });
+    } catch (error) {
+      setAlert({ severity: "error", message: error.message });
+    }
+  };
+
+  const handleForgotPasswordSubmit = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (
+      !forgotPasswordEmail.trim() ||
+      !emailRegex.test(forgotPasswordEmail.trim())
+    ) {
+      setAlert({
+        severity: "error",
+        message: "Please enter a valid email address",
+      });
+      return;
+    }
+
+    try {
+      await forgotPassword(forgotPasswordEmail.trim());
+      setAlert({ severity: "success", message: "Password reset email sent!" });
+      setIsForgotPasswordDialogOpen(false);
+    } catch (error) {
+      setAlert({ severity: "error", message: error.message });
     }
   };
 
@@ -81,7 +156,7 @@ export default function Login() {
         alignItems: "center",
         minHeight: "100vh",
         backgroundColor: "#f0f0f0",
-        px: 2, // Padding for small screens
+        px: 2,
       }}
     >
       <Box
@@ -104,7 +179,7 @@ export default function Login() {
             spacing={{ xs: 2, md: 3 }}
             columns={{ xs: 4, sm: 8, md: 12 }}
           >
-            <Grid size={{ xs: 4, sm: 8, md: 12 }}>
+            <Grid item size={{ xs: 4, sm: 8, md: 12 }}>
               <InputText
                 fullWidth
                 label="Email"
@@ -151,10 +226,63 @@ export default function Login() {
                   Register now
                 </Link>
               </Typography>
+              <Typography sx={{ mt: 1 }}>
+                <Link
+                  component="button"
+                  onClick={() => setIsForgotPasswordDialogOpen(true)}
+                  underline="hover"
+                >
+                  Forgot Password?
+                </Link>
+              </Typography>
             </Grid>
           </Grid>
         </form>
       </Box>
+
+      <CustomDialog
+        open={isOtpDialogOpen}
+        title="Verify Email"
+        content={
+          <Box>
+            <InputNumber
+              label="Enter OTP"
+              value={otp}
+              onChange={handleOtpChange}
+              hasError={!otp.trim()}
+              errorText={!otp.trim() ? "OTP is required" : ""}
+            />
+            <Link
+              component="button"
+              onClick={handleResendOtp}
+              underline="hover"
+            >
+              Resend OTP
+            </Link>
+          </Box>
+        }
+        onClose={() => setIsOtpDialogOpen(false)}
+        onSubmit={handleOtpSubmit}
+      />
+
+      <CustomDialog
+        open={isForgotPasswordDialogOpen}
+        title="Forgot Password"
+        content={
+          <Box>
+            <InputText
+              fullWidth
+              label="Email"
+              value={forgotPasswordEmail}
+              onChange={(e) => setForgotPasswordEmail(e.target.value)}
+              hasError={!forgotPasswordEmail.trim()}
+              errorText={!forgotPasswordEmail.trim() ? "Email is required" : ""}
+            />
+          </Box>
+        }
+        onClose={() => setIsForgotPasswordDialogOpen(false)}
+        onSubmit={handleForgotPasswordSubmit}
+      />
     </Box>
   );
 }

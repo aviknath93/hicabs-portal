@@ -248,7 +248,6 @@ export default function RegistrationForm() {
         }
         onClose={() => setIsDialogOpen(false)}
         onSubmit={handleOtpSubmit}
-        email={formData.email}
       />
     </Box>
   );

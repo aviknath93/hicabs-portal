@@ -2,6 +2,7 @@ export interface CustomError extends Error {
   status?: number; // HTTP status code
   message: string; // General error message
   errors?: Array<ErrorDetail>; // Array of detailed error information
+  [key: string]: any; // Index signature for additional properties
 }
 
 interface ErrorDetail {

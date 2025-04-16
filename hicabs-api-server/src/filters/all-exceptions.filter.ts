@@ -22,6 +22,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'An error occurred';
     const errors: ErrorDetail[] = [];
+    const additionalProperties: Record<string, any> = {};
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
@@ -58,6 +59,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
           errors.push({ message: res.error });
           message = res.error;
         }
+
+        // Collect additional properties
+        for (const key in res) {
+          if (key !== 'message' && key !== 'errors' && key !== 'error') {
+            additionalProperties[key] = res[key];
+          }
+        }
       }
     } else if (exception instanceof Error) {
       message = exception.message || message;
@@ -69,6 +77,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     response.status(status).json({
       message,
       errors,
+      ...additionalProperties, // Include additional properties in the response
     });
   }
 }
