@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Box, Button, Typography, Grid, TextField, Link } from "@mui/material";
 import useStore from "../utils/store";
+import consts from "../utils/constants.json";
 import useAlertStore from "../utils/alert-store";
+import { useNavigate } from "react-router-dom";
 
 export default function RegistrationForm() {
   const [formData, setFormData] = useState({
@@ -13,7 +15,9 @@ export default function RegistrationForm() {
   });
 
   const [errors, setErrors] = useState({});
-  const registerUser = useStore((state) => state.registerUser);
+  const register = useStore((state) => state.register);
+  const navigate = useNavigate();
+  const navigateTo = useStore((state) => state.navigateTo);
   const { setAlert } = useAlertStore();
 
   const handleChange = (field) => (event) => {
@@ -49,7 +53,7 @@ export default function RegistrationForm() {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
       try {
-        const response = await registerUser({
+        const response = await register({
           name: formData.name.trim(),
           email: formData.email.trim(),
           password: formData.password.trim(),
@@ -160,9 +164,16 @@ export default function RegistrationForm() {
               size={{ xs: 4, sm: 8, md: 12 }}
               sx={{ textAlign: "center", mt: 2 }}
             >
-              <Link href="#" underline="hover">
-                Already have an account? Login
-              </Link>
+              <Typography>
+                Already have an account?{" "}
+                <Link
+                  component="button"
+                  onClick={() => navigateTo(navigate, consts["paths"]["login"])}
+                  underline="hover"
+                >
+                  Login
+                </Link>
+              </Typography>
             </Grid>
           </Grid>
         </form>
