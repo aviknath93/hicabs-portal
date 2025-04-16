@@ -23,6 +23,7 @@ import { UpdateDriverDto } from './dto/update-driver.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RequestWithUser } from '../auth/types/request-with-user';
 import { handleException } from '../utils/exception-handler.util';
+import { CarType } from './driver.entity';
 
 @ApiTags('drivers')
 @ApiBearerAuth('access-token')
@@ -45,7 +46,7 @@ export class DriversController {
         },
         carType: {
           type: 'string',
-          example: 'Sedan',
+          example: CarType.STANDARD,
           description: 'The type of car the driver uses',
         },
         carNo: {

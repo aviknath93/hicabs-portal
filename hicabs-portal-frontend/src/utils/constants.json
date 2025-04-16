@@ -1,0 +1,7 @@
+{
+  "paths": {
+    "login": "/",
+    "registration": "/registration",
+    "dashboard": "/dashboard"
+  }
+}
