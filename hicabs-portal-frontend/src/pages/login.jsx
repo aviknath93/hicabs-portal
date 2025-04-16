@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Box, Button, Typography, Grid, TextField, Link } from "@mui/material";
+import { Box, Button, Typography, Grid, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import useStore from "../utils/store";
 import useAlertStore from "../utils/alert-store";
-import RequestAPI from "../utils/request-api";
 import consts from "../utils/constants.json";
+import InputText from "../components/shared/form-components/input-text";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -105,24 +105,24 @@ export default function Login() {
             columns={{ xs: 4, sm: 8, md: 12 }}
           >
             <Grid size={{ xs: 4, sm: 8, md: 12 }}>
-              <TextField
+              <InputText
                 fullWidth
                 label="Email"
                 value={formData.email}
                 onChange={handleChange("email")}
-                error={!!errors.email}
-                helperText={errors.email}
+                hasError={!!errors.email}
+                errorText={errors.email}
               />
             </Grid>
             <Grid size={{ xs: 4, sm: 8, md: 12 }}>
-              <TextField
+              <InputText
                 fullWidth
                 type="password"
                 label="Password"
                 value={formData.password}
                 onChange={handleChange("password")}
-                error={!!errors.password}
-                helperText={errors.password}
+                hasError={!!errors.password}
+                errorText={errors.password}
               />
             </Grid>
             <Grid size={{ xs: 4, sm: 8, md: 12 }}>

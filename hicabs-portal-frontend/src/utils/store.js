@@ -27,6 +27,29 @@ const useStore = create((set) => ({
       throw error;
     }
   },
+  verifyEmail: async (userId, otp) => {
+    try {
+      const response = await RequestAPI(
+        `users/verify-email/${userId}`,
+        "POST",
+        { otp }
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  resendVerification: async (userId) => {
+    try {
+      const response = await RequestAPI(
+        `users/resend-verification/${userId}`,
+        "POST"
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
   navigateTo: (navigate, path) => {
     navigate(path);
   },

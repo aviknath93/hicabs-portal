@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { Box, Button, Typography, Grid, TextField, Link } from "@mui/material";
+import { Box, Button, Typography, Grid, Link } from "@mui/material";
 import useStore from "../utils/store";
 import consts from "../utils/constants.json";
 import useAlertStore from "../utils/alert-store";
 import { useNavigate } from "react-router-dom";
+import CustomDialog from "../components/shared/ui-components/custom-dialog";
+import InputNumber from "../components/shared/form-components/input-number";
+import InputText from "../components/shared/form-components/input-text";
 
 export default function RegistrationForm() {
   const [formData, setFormData] = useState({
@@ -15,7 +18,13 @@ export default function RegistrationForm() {
   });
 
   const [errors, setErrors] = useState({});
+  const [otp, setOtp] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [userId, setUserId] = useState(null);
+
   const register = useStore((state) => state.register);
+  const verifyEmail = useStore((state) => state.verifyEmail);
+  const resendVerification = useStore((state) => state.resendVerification);
   const navigate = useNavigate();
   const navigateTo = useStore((state) => state.navigateTo);
   const { setAlert } = useAlertStore();
@@ -60,7 +69,9 @@ export default function RegistrationForm() {
           confirmPassword: formData.confirmPassword.trim(),
           userType: formData.userType.trim(),
         });
+        setUserId(response.userId); // Assuming response contains userId
         setAlert({ severity: "success", message: "Registration successful!" });
+        setIsDialogOpen(true);
       } catch (error) {
         if (error.errors) {
           const errorMessage = error.errors.map(
@@ -74,6 +85,41 @@ export default function RegistrationForm() {
       }
     } else {
       setErrors(validationErrors);
+    }
+  };
+
+  const handleOtpChange = (event) => {
+    const value = event.target.value;
+    if (/^\d*$/.test(value)) {
+      setOtp(value);
+    }
+  };
+
+  const handleOtpSubmit = async () => {
+    if (!otp.trim()) {
+      setAlert({ severity: "error", message: "OTP is required" });
+      return;
+    }
+
+    try {
+      await verifyEmail(userId, parseInt(otp.trim()));
+      setAlert({
+        severity: "success",
+        message: "Email verified successfully!",
+      });
+      setIsDialogOpen(false);
+      navigateTo(navigate, consts["paths"]["login"]);
+    } catch (error) {
+      setAlert({ severity: "error", message: error.message });
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      await resendVerification(userId);
+      setAlert({ severity: "success", message: "Verification email resent!" });
+    } catch (error) {
+      setAlert({ severity: "error", message: error.message });
     }
   };
 
@@ -109,45 +155,45 @@ export default function RegistrationForm() {
             columns={{ xs: 4, sm: 8, md: 12 }}
           >
             <Grid size={{ xs: 4, sm: 8, md: 12 }}>
-              <TextField
+              <InputText
                 fullWidth
                 label="Name"
                 value={formData.name}
                 onChange={handleChange("name")}
-                error={!!errors.name}
-                helperText={errors.name}
+                hasError={!!errors.name}
+                errorText={errors.name}
               />
             </Grid>
             <Grid size={{ xs: 4, sm: 8, md: 12 }}>
-              <TextField
+              <InputText
                 fullWidth
                 label="Email"
                 value={formData.email}
                 onChange={handleChange("email")}
-                error={!!errors.email}
-                helperText={errors.email}
+                hasError={!!errors.email}
+                errorText={errors.email}
               />
             </Grid>
             <Grid size={{ xs: 4, sm: 8, md: 12 }}>
-              <TextField
+              <InputText
                 fullWidth
                 type="password"
                 label="Password"
                 value={formData.password}
                 onChange={handleChange("password")}
-                error={!!errors.password}
-                helperText={errors.password}
+                hasError={!!errors.password}
+                errorText={errors.password}
               />
             </Grid>
             <Grid size={{ xs: 4, sm: 8, md: 12 }}>
-              <TextField
+              <InputText
                 fullWidth
                 type="password"
                 label="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={handleChange("confirmPassword")}
-                error={!!errors.confirmPassword}
-                helperText={errors.confirmPassword}
+                hasError={!!errors.confirmPassword}
+                errorText={errors.confirmPassword}
               />
             </Grid>
             <Grid size={{ xs: 4, sm: 8, md: 12 }}>
@@ -178,6 +224,32 @@ export default function RegistrationForm() {
           </Grid>
         </form>
       </Box>
+
+      <CustomDialog
+        open={isDialogOpen}
+        title="Verify Email"
+        content={
+          <Box>
+            <InputNumber
+              label="Enter OTP"
+              value={otp}
+              onChange={handleOtpChange}
+              hasError={!otp.trim()}
+              errorText={!otp.trim() ? "OTP is required" : ""}
+            />
+            <Link
+              component="button"
+              onClick={handleResendOtp}
+              underline="hover"
+            >
+              Resend OTP
+            </Link>
+          </Box>
+        }
+        onClose={() => setIsDialogOpen(false)}
+        onSubmit={handleOtpSubmit}
+        email={formData.email}
+      />
     </Box>
   );
 }

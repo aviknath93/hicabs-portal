@@ -24,7 +24,7 @@ const CustomAlert = ({ severity, message, timeout = 5000, onClose }) => {
         position: "fixed",
         top: 20,
         right: 20,
-        zIndex: 1000,
+        zIndex: 1301,
       }}
     >
       <Alert
