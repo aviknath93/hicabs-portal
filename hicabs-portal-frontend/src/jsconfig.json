@@ -5,8 +5,8 @@
       "jsx": "react",
       "resolveJsonModule": true,
       "allowSyntheticDefaultImports": true,
-      // "target": "es2017", // Ensure compatibility with ES2017 features
-      // "lib": ["dom", "es2017"] // Include ES2017 library for modern features
+      // "target": "es2015",
+      "lib": ["dom", "es2015"]
     },
     "exclude": ["node_modules"]
   }
