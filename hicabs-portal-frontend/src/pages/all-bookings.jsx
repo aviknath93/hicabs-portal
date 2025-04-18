@@ -98,7 +98,7 @@ const AllBookings = () => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
+    <Box sx={{ flexGrow: 1 }}>
       <Typography
         variant="h4"
         gutterBottom
