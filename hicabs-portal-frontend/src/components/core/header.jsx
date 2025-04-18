@@ -14,7 +14,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import useStore from "../../utils/store";
 
 const Header = ({ handleDrawerToggle }) => {
-  const isMobile = useMediaQuery("(max-width:600px)");
+  const isMobileOrTablet = useMediaQuery("(max-width:960px)");
   const logout = useStore((state) => state.logout);
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -33,10 +33,10 @@ const Header = ({ handleDrawerToggle }) => {
   return (
     <AppBar
       position="fixed"
-      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 2 }} // Ensure AppBar is above the Drawer
     >
       <Toolbar>
-        {isMobile && (
+        {isMobileOrTablet && (
           <IconButton
             color="inherit"
             edge="start"

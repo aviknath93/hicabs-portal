@@ -8,7 +8,7 @@ import {
   Collapse,
   Divider,
   Box,
-  ListItemButton, // Import ListItemButton
+  ListItemButton,
 } from "@mui/material";
 import {
   ExpandLess,
@@ -44,7 +44,7 @@ const menuItems = [
 
 const SideMenu = ({ mobileOpen, handleDrawerToggle }) => {
   const location = useLocation();
-  const isMobile = useMediaQuery("(max-width:600px)");
+  const isMobileOrTablet = useMediaQuery("(max-width:960px)");
   const [openItems, setOpenItems] = useState({});
 
   const handleClick = (itemText) => {
@@ -97,7 +97,7 @@ const SideMenu = ({ mobileOpen, handleDrawerToggle }) => {
 
   const drawerContent = (
     <Box
-      onClick={isMobile ? handleDrawerToggle : undefined}
+      onClick={isMobileOrTablet ? handleDrawerToggle : undefined}
       sx={{ textAlign: "center" }}
     >
       <Box sx={{ my: 2, fontWeight: "bold" }}>Hibernate Dashboard</Box>
@@ -107,20 +107,21 @@ const SideMenu = ({ mobileOpen, handleDrawerToggle }) => {
   );
 
   return (
-    <>
-      <Drawer
-        variant={isMobile ? "temporary" : "permanent"}
-        open={isMobile ? mobileOpen : true}
-        onClose={handleDrawerToggle}
-        ModalProps={{ keepMounted: true }}
-        sx={{
-          display: { xs: "block", sm: "block" },
-          "& .MuiDrawer-paper": { width: drawerWidth },
-        }}
-      >
-        {drawerContent}
-      </Drawer>
-    </>
+    <Drawer
+      variant={isMobileOrTablet ? "temporary" : "permanent"}
+      open={isMobileOrTablet ? mobileOpen : true}
+      onClose={handleDrawerToggle}
+      ModalProps={{ keepMounted: true }}
+      sx={{
+        display: { xs: "block", sm: "block" },
+        "& .MuiDrawer-paper": {
+          width: drawerWidth,
+          zIndex: (theme) => theme.zIndex.drawer,
+        },
+      }}
+    >
+      {drawerContent}
+    </Drawer>
   );
 };
 
