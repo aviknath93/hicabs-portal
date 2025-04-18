@@ -12,6 +12,8 @@ import useAlertStore from "./utils/alert-store";
 import ProtectedRoute from "./utils/protected-route";
 import Layout from "./components/core/layout";
 import DriverManagement from "./pages/driver-management";
+import MyBookings from "./pages/my-bookings";
+import AllBookings from "./pages/all-bookings";
 function App() {
   const { alert, clearAlert } = useAlertStore();
   return (
@@ -47,6 +49,26 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <DriverManagement />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={consts["paths"]["all-bookings"]}
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <AllBookings />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={consts["paths"]["my-bookings"]}
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <MyBookings />
               </Layout>
             </ProtectedRoute>
           }

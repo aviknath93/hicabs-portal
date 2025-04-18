@@ -244,6 +244,7 @@ export default function Login() {
       <CustomDialog
         open={isOtpDialogOpen}
         title="Verify Email"
+        contextText="An OTP has been sent to the given email address"
         content={
           <Box>
             <InputNumber

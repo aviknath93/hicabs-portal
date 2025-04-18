@@ -12,6 +12,7 @@ export default function CustomDialog({
   onClose,
   onSubmit,
   title = "Dialog Title",
+  contextText = "",
   content,
   maxWidth = "sm",
   fullWidth = true,
@@ -25,9 +26,7 @@ export default function CustomDialog({
     >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          An OTP has been sent to the given email address
-        </DialogContentText>
+        <DialogContentText>{contextText}</DialogContentText>
         <Box sx={{ mt: 2 }}>{content}</Box>
       </DialogContent>
       <DialogActions>

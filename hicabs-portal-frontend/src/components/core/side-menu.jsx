@@ -15,7 +15,7 @@ import {
   ExpandMore,
   Dashboard as DashboardIcon,
   People as PeopleIcon,
-  DirectionsCar as CarIcon,
+  List as ListIcon,
 } from "@mui/icons-material";
 import { Link, useLocation } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -34,14 +34,14 @@ const menuItems = [
     path: consts["paths"]["driver-management"],
     icon: <PeopleIcon />,
   },
-  // {
-  //   text: "Vehicles",
-  //   icon: <CarIcon />,
-  //   children: [
-  //     { text: "All Vehicles", path: "/vehicles" },
-  //     { text: "Add Vehicle", path: "/vehicles/add" },
-  //   ],
-  // },
+  {
+    text: "Booking Management",
+    icon: <ListIcon />,
+    children: [
+      { text: "All Bookings", path: consts["paths"]["all-bookings"] },
+      { text: "My Bookings", path: consts["paths"]["my-bookings"] },
+    ],
+  },
 ];
 
 const SideMenu = ({ mobileOpen, handleDrawerToggle }) => {

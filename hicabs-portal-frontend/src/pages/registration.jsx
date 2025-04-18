@@ -228,6 +228,7 @@ export default function RegistrationForm() {
       <CustomDialog
         open={isDialogOpen}
         title="Verify Email"
+        contextText="An OTP has been sent to the given email address"
         content={
           <Box>
             <InputNumber

@@ -3,6 +3,8 @@
     "login": "/",
     "registration": "/registration",
     "dashboard": "/dashboard",
-    "driver-management": "/driver-management"
+    "driver-management": "/driver-management",
+    "all-bookings": "/all-bookings",
+    "my-bookings": "/my-bookings"
   }
 }
