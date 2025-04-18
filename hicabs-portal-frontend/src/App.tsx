@@ -11,6 +11,7 @@ import CustomAlert from "./components/shared/ui-components/custom-alert";
 import useAlertStore from "./utils/alert-store";
 import ProtectedRoute from "./utils/protected-route";
 import Layout from "./components/core/layout";
+import DriverManagement from "./pages/driver-management";
 function App() {
   const { alert, clearAlert } = useAlertStore();
   return (
@@ -36,6 +37,16 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <Dashboard />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={consts["paths"]["driver-management"]}
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <DriverManagement />
               </Layout>
             </ProtectedRoute>
           }

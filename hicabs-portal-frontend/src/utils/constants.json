@@ -2,6 +2,7 @@
   "paths": {
     "login": "/",
     "registration": "/registration",
-    "dashboard": "/dashboard"
+    "dashboard": "/dashboard",
+    "driver-management": "/driver-management"
   }
 }

@@ -19,27 +19,29 @@ import {
 } from "@mui/icons-material";
 import { Link, useLocation } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import consts from "./../..//utils/constants.json";
 
 const drawerWidth = 240;
 
 const menuItems = [
-  { text: "Dashboard", path: "/dashboard", icon: <DashboardIcon /> },
+  {
+    text: "Dashboard",
+    path: consts["paths"]["dashboard"],
+    icon: <DashboardIcon />,
+  },
   {
     text: "Driver Management",
+    path: consts["paths"]["driver-management"],
     icon: <PeopleIcon />,
-    children: [
-      { text: "All Drivers", path: "/drivers" },
-      { text: "Add Driver", path: "/drivers/add" },
-    ],
   },
-  {
-    text: "Vehicles",
-    icon: <CarIcon />,
-    children: [
-      { text: "All Vehicles", path: "/vehicles" },
-      { text: "Add Vehicle", path: "/vehicles/add" },
-    ],
-  },
+  // {
+  //   text: "Vehicles",
+  //   icon: <CarIcon />,
+  //   children: [
+  //     { text: "All Vehicles", path: "/vehicles" },
+  //     { text: "Add Vehicle", path: "/vehicles/add" },
+  //   ],
+  // },
 ];
 
 const SideMenu = ({ mobileOpen, handleDrawerToggle }) => {
