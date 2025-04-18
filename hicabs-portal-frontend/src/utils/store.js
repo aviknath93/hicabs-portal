@@ -2,6 +2,15 @@ import { create } from "zustand";
 import RequestAPI from "./request-api";
 
 const useStore = create((set) => ({
+  isAuthenticated: !!localStorage.getItem("token"),
+  setAuthentication: (token) => {
+    localStorage.setItem("token", token);
+    set({ isAuthenticated: true });
+  },
+  logout: () => {
+    localStorage.removeItem("token");
+    set({ isAuthenticated: false });
+  },
   getIpAddress: async () => {
     try {
       const response = await fetch("https://api.ipify.org?format=json");
@@ -66,6 +75,7 @@ const useStore = create((set) => ({
 }));
 
 // Expose the store globally for debugging purposes
+// @ts-ignore
 window.store = useStore;
 
 export default useStore;

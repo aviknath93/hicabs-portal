@@ -24,6 +24,7 @@ export default function Login() {
 
   const getIpAddress = useStore((state) => state.getIpAddress);
   const login = useStore((state) => state.login);
+  const setAuthentication = useStore((state) => state.setAuthentication);
   const verifyEmail = useStore((state) => state.verifyEmail);
   const forgotPassword = useStore((state) => state.forgotPassword);
   const resendVerification = useStore((state) => state.resendVerification);
@@ -65,7 +66,7 @@ export default function Login() {
           userAgent,
           ipAddress,
         });
-
+        setAuthentication(response);
         setAlert({ severity: "success", message: "Login successful!" });
         navigateTo(navigate, consts["paths"]["dashboard"]);
       } catch (error) {
@@ -179,7 +180,7 @@ export default function Login() {
             spacing={{ xs: 2, md: 3 }}
             columns={{ xs: 4, sm: 8, md: 12 }}
           >
-            <Grid item size={{ xs: 4, sm: 8, md: 12 }}>
+            <Grid size={{ xs: 4, sm: 8, md: 12 }}>
               <InputText
                 fullWidth
                 label="Email"

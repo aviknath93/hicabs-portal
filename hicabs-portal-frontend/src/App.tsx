@@ -9,6 +9,8 @@ import Registration from "./pages/registration";
 import Dashboard from "./pages/dashboard";
 import CustomAlert from "./components/shared/ui-components/custom-alert";
 import useAlertStore from "./utils/alert-store";
+import ProtectedRoute from "./utils/protected-route";
+import Layout from "./components/core/layout";
 function App() {
   const { alert, clearAlert } = useAlertStore();
   return (
@@ -28,7 +30,16 @@ function App() {
           path={consts["paths"]["registration"]}
           element={<Registration />}
         />
-        <Route path={consts["paths"]["dashboard"]} element={<Dashboard />} />
+        <Route
+          path={consts["paths"]["dashboard"]}
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Dashboard />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );
