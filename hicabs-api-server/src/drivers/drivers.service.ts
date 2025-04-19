@@ -1,6 +1,6 @@
 // drivers.service.ts
 import { Injectable, Inject } from '@nestjs/common';
-import { Repository, DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Employee as Driver } from './driver.entity';
 import { DriverDto } from './dto/driver.dto';
 
@@ -9,7 +9,6 @@ export class DriversService {
   constructor(
     @Inject('DRIVER_REPOSITORY')
     private driverRepository: Repository<Driver>,
-    @Inject('DATA_SOURCE_HICABS') private dataSource: DataSource,
   ) {}
 
   async getDriversByVendorId(vendorId: string): Promise<DriverDto[]> {

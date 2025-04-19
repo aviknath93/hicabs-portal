@@ -1,5 +1,10 @@
 import { DataSource } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import { User } from 'src/users/user.entity';
+import { Profile } from 'src/profiles/profile.entity';
+import { Session } from 'src/sessions/session.entity';
+import { Password } from 'src/passwords/password.entity';
+import { Employee } from 'src/drivers/driver.entity';
 
 export const databaseProviders = [
   {
@@ -12,8 +17,8 @@ export const databaseProviders = [
         username: configService.get('HICABS_PORTAL_DB_USER'),
         password: configService.get('HICABS_PORTAL_DB_PASSWORD'),
         database: configService.get('HICABS_PORTAL_DB_NAME'),
-        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: true,
+        entities: [User, Profile, Session, Password],
+        synchronize: true, // Set to false in production
       });
 
       return dataSource.initialize();
@@ -30,8 +35,8 @@ export const databaseProviders = [
         username: configService.get('HICABS_DB_USER'),
         password: configService.get('HICABS_DB_PASSWORD'),
         database: configService.get('HICABS_DB_NAME'),
-        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: true,
+        entities: [Employee],
+        synchronize: true, // Set to false in production
       });
 
       return dataSource.initialize();
