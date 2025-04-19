@@ -118,7 +118,7 @@ export class UsersService {
       },
     });
 
-    const subject = 'HiCabs - Email Verification';
+    const subject = 'hicabs - Email Verification';
     const html = `<p>Your verification code is <strong>${otp}</strong></p>`;
 
     const mailOptions = {
@@ -308,8 +308,12 @@ export class UsersService {
       },
     });
 
-    const subject = 'HiCabs - Password Reset';
-    const html = `<p>Click <a href="http://yourapp.com/reset-password?token=${token}">here</a> to reset your password.</p>`;
+    const frontendURL =
+      this.configService.get<string>('FRONTEND_HOST') +
+      ':' +
+      this.configService.get<string>('FRONTEND_PORT');
+    const subject = 'hicabs - Password Reset';
+    const html = `<p>Click <a href="http://${frontendURL}/reset-password/${token}">here</a> to reset your password.</p>`;
 
     const mailOptions = {
       from: emailUser,

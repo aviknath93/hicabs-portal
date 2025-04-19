@@ -69,6 +69,17 @@ const useStore = create((set) => ({
       throw error;
     }
   },
+  resetPassword: async (token, newPassword) => {
+    try {
+      const response = await RequestAPI("users/reset-password", "POST", {
+        token,
+        newPassword,
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
   navigateTo: (navigate, path) => {
     navigate(path);
   },

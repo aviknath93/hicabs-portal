@@ -14,6 +14,7 @@ import Layout from "./components/core/layout";
 import DriverManagement from "./pages/driver-management";
 import MyBookings from "./pages/my-bookings";
 import AllBookings from "./pages/all-bookings";
+import ResetPassword from "./pages/reset-password";
 function App() {
   const { alert, clearAlert } = useAlertStore();
   return (
@@ -33,6 +34,7 @@ function App() {
           path={consts["paths"]["registration"]}
           element={<Registration />}
         />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route
           path={consts["paths"]["dashboard"]}
           element={

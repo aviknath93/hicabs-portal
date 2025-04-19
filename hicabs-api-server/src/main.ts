@@ -55,7 +55,7 @@ async function bootstrap() {
 
   // Swagger configuration
   const config = new DocumentBuilder()
-    .setTitle('HiCabs-portal API Documentation')
+    .setTitle('hicabs-portal API Documentation')
     .setDescription('The API description')
     .setVersion('1.0')
     .addTag('api')

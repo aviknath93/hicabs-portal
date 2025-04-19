@@ -47,7 +47,7 @@ const Header = ({ handleDrawerToggle }) => {
           </IconButton>
         )}
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          HiCabs Portal
+          hicabs Portal
         </Typography>
         <Box>
           <IconButton color="inherit" onClick={handleAvatarClick}>
