@@ -59,9 +59,15 @@ const SideMenu = ({ mobileOpen, handleDrawerToggle }) => {
       return (
         <React.Fragment key={item.text}>
           <ListItemButton onClick={() => handleClick(item.text)}>
-            {item.icon && <ListItemIcon>{item.icon}</ListItemIcon>}
+            {item.icon && (
+              <ListItemIcon sx={{ color: "#ffffff" }}>{item.icon}</ListItemIcon>
+            )}
             <ListItemText primary={item.text} />
-            {open ? <ExpandLess /> : <ExpandMore />}
+            {open ? (
+              <ExpandLess sx={{ color: "#ffffff" }} />
+            ) : (
+              <ExpandMore sx={{ color: "#ffffff" }} />
+            )}
           </ListItemButton>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
@@ -90,7 +96,9 @@ const SideMenu = ({ mobileOpen, handleDrawerToggle }) => {
           to={item.path}
           selected={location.pathname === item.path}
         >
-          {item.icon && <ListItemIcon>{item.icon}</ListItemIcon>}
+          {item.icon && (
+            <ListItemIcon sx={{ color: "#ffffff" }}>{item.icon}</ListItemIcon>
+          )}
           <ListItemText primary={item.text} />
         </ListItemButton>
       </ListItem>
@@ -100,10 +108,10 @@ const SideMenu = ({ mobileOpen, handleDrawerToggle }) => {
   const drawerContent = (
     <Box
       onClick={isMobileOrTablet ? handleDrawerToggle : undefined}
-      sx={{ textAlign: "center" }}
+      sx={{ textAlign: "center", bgcolor: "#1e1e2f", color: "#ffffff" }}
     >
       <Box sx={{ my: 2, fontWeight: "bold" }}>Hibernate Dashboard</Box>
-      <Divider />
+      <Divider sx={{ bgcolor: "#444" }} />
       <List>{menuItems.map(renderMenuItem)}</List>
     </Box>
   );
@@ -119,6 +127,8 @@ const SideMenu = ({ mobileOpen, handleDrawerToggle }) => {
         "& .MuiDrawer-paper": {
           width: drawerWidth,
           zIndex: (theme) => theme.zIndex.drawer,
+          bgcolor: "#1e1e2f",
+          color: "#ffffff",
         },
       }}
     >

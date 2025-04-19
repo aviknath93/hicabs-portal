@@ -26,6 +26,7 @@ const Layout = ({ children }) => {
         <Box
           component="main"
           sx={{
+            backgroundColor: "#f0f0f0",
             flexGrow: 1,
             p: 3,
             width: isMobileOrTablet ? "100%" : `calc(100% - ${drawerWidth}px)`,
