@@ -178,6 +178,18 @@ const useStore = create((set) => ({
     }
   },
 
+  driverList: [],
+
+  fetchDriverList: async () => {
+    try {
+      const response = await RequestAPI("drivers/list", "GET");
+      set({ driverList: response });
+    } catch (error) {
+      console.error("Failed to fetch driver list:", error);
+      throw error;
+    }
+  },
+
   navigateTo: (navigate, path) => {
     navigate(path);
   },
