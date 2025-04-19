@@ -173,7 +173,7 @@ export default function MyProfile() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "100vh",
+        minHeight: "100%",
         px: 2,
       }}
     >

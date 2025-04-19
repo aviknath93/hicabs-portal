@@ -1,88 +1,33 @@
-import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { Driver } from './driver.entity';
-import { CreateDriverDto } from './dto/create-driver.dto';
-import { UpdateDriverDto } from './dto/update-driver.dto';
+// drivers.service.ts
+import { Injectable, Inject } from '@nestjs/common';
+import { Repository, DataSource } from 'typeorm';
+import { Employee as Driver } from './driver.entity';
+import { DriverDto } from './dto/driver.dto';
 
 @Injectable()
 export class DriversService {
   constructor(
     @Inject('DRIVER_REPOSITORY')
     private driverRepository: Repository<Driver>,
+    @Inject('DATA_SOURCE_HICABS') private dataSource: DataSource,
   ) {}
 
-  async register(
-    vendorId: string,
-    createDriverDto: CreateDriverDto,
-  ): Promise<{ driverId: string }> {
-    const { name, carType, carNo } = createDriverDto;
-
-    const existingDriver = await this.driverRepository.findOne({
-      where: { carNo },
-    });
-    if (existingDriver) {
-      throw new HttpException(
-        {
-          message: 'Validation failed',
-          errors: [
-            {
-              field: 'carNo',
-              constraints: {
-                unique: 'Driver with this car number already exists',
-              },
-            },
-          ],
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    const driver = this.driverRepository.create({
-      vendorId,
-      name,
-      carType,
-      carNo,
+  async getDriversByVendorId(vendorId: string): Promise<DriverDto[]> {
+    // Fetch drivers
+    const drivers: Driver[] = await this.driverRepository.find({
+      where: { vendor_id: vendorId },
     });
 
-    const savedDriver = await this.driverRepository.save(driver);
-
-    return { driverId: savedDriver.driverId };
+    return drivers.map((driver) => this.toDriverDto(driver));
   }
 
-  async update(
-    driverId: string,
-    vendorId: string,
-    updateDriverDto: UpdateDriverDto,
-  ): Promise<void> {
-    const { name, carType, carNo, isBlocked } = updateDriverDto;
-
-    const driver = await this.driverRepository.findOne({
-      where: { driverId, vendorId },
-    });
-
-    if (!driver) {
-      throw new HttpException(
-        {
-          message: 'Driver not found or unauthorized',
-          errors: [
-            {
-              field: 'driverId',
-              constraints: {
-                notFound:
-                  'Driver not found or you do not have permission to update this driver',
-              },
-            },
-          ],
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    await this.driverRepository.update(driverId, {
-      name,
-      carType,
-      carNo,
-      isBlocked,
-    });
+  private toDriverDto(driver: Driver): DriverDto {
+    return {
+      driver_id: driver.id,
+      name: `${driver.fName} ${driver.lName}`,
+      mobile: driver.Mobile,
+      address: driver.Address,
+      email: driver.email,
+    };
   }
 }

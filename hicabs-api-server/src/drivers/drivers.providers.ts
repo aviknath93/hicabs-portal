@@ -1,10 +1,10 @@
 import { DataSource } from 'typeorm';
-import { Driver } from './driver.entity';
+import { Employee as Driver } from './driver.entity';
 
 export const driverProviders = [
   {
     provide: 'DRIVER_REPOSITORY',
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Driver),
-    inject: ['DATA_SOURCE_HICABS_PORTAL'],
+    inject: ['DATA_SOURCE_HICABS'],
   },
 ];
