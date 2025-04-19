@@ -15,6 +15,9 @@ import DriverManagement from "./pages/driver-management";
 import MyBookings from "./pages/my-bookings";
 import AllBookings from "./pages/all-bookings";
 import ResetPassword from "./pages/reset-password";
+import ChangePassword from "./pages/change-password";
+import MyProfile from "./pages/my-profile";
+
 function App() {
   const { alert, clearAlert } = useAlertStore();
   return (
@@ -41,6 +44,26 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <Dashboard />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={consts["paths"]["my-profile"]}
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <MyProfile />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={consts["paths"]["change-password"]}
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ChangePassword />
               </Layout>
             </ProtectedRoute>
           }

@@ -24,7 +24,7 @@ const getIpAddress = async () => {
 // Helper function to make API calls
 const RequestAPI = async (endpoint, method = "POST", payload) => {
   const backendUrl = getBackendUrl();
-  console.log("backendUrl", backendUrl);
+
   const accessToken = getAccessToken();
 
   if (!backendUrl) {
@@ -38,7 +38,7 @@ const RequestAPI = async (endpoint, method = "POST", payload) => {
   };
 
   if (accessToken) {
-    headers["Authorization"] = `${accessToken}`;
+    headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
   try {

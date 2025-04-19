@@ -2,34 +2,30 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe, HttpException, HttpStatus } from '@nestjs/common';
-import { AllExceptionsFilter } from './filters/all-exceptions.filter'; // Import the custom exception filter
+import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import { rateLimitConfig } from './config/rate-limit.config';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 import helmet from 'helmet';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // app.use(
-  //   helmet({
-  //     contentSecurityPolicy: {
-  //       directives: {
-  //         defaultSrc: [`'self'`],
-  //         styleSrc: [`'self'`, `'unsafe-inline'`],
-  //         imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
-  //         scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
-  //       },
-  //     },
-  //   }),
-  // );
+  // ✅ Serve static files from the /uploads folder
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads/', // So files are served at /uploads/filename.ext
+  });
 
+  // Helmet security
   app.use(helmet());
 
+  // Rate limiting
   app.use(rateLimitConfig);
 
   // Enable CORS
   app.enableCors();
 
-  // Set up global validation pipe
+  // Global validation
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -50,10 +46,10 @@ async function bootstrap() {
     }),
   );
 
-  // Apply the custom exception filter globally
+  // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  // Swagger configuration
+  // Swagger setup
   const config = new DocumentBuilder()
     .setTitle('hicabs-portal API Documentation')
     .setDescription('The API description')
@@ -67,13 +63,14 @@ async function bootstrap() {
         name: 'Authorization',
         in: 'header',
       },
-      'access-token', // name of the security scheme
+      'access-token',
     )
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  // Start the application
+  // Start the server
   await app.listen(process.env.PORT ?? 3000);
 }
 

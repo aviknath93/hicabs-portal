@@ -12,8 +12,12 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import useStore from "../../utils/store";
+import consts from "../../utils/constants.json";
+import { useNavigate } from "react-router-dom";
 
 const Header = ({ handleDrawerToggle }) => {
+  const navigate = useNavigate();
+  const navigateTo = useStore((state) => state.navigateTo);
   const isMobileOrTablet = useMediaQuery("(max-width:960px)");
   const logout = useStore((state) => state.logout);
 
@@ -26,8 +30,13 @@ const Header = ({ handleDrawerToggle }) => {
 
   const handleMenuClose = (action) => {
     setAnchorEl(null);
-    if (action === "logout") logout();
-    // add navigations if needed
+    if (action === "logout") {
+      logout();
+    } else if (action === "profile") {
+      navigateTo(navigate, consts["paths"]["my-profile"]);
+    } else if (action === "changePassword") {
+      navigateTo(navigate, consts["paths"]["change-password"]);
+    }
   };
 
   return (
