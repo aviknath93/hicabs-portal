@@ -5,6 +5,6 @@ export const driverProviders = [
   {
     provide: 'DRIVER_REPOSITORY',
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Driver),
-    inject: ['DATA_SOURCE'],
+    inject: ['DATA_SOURCE_HICABS_PORTAL'],
   },
 ];

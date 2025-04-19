@@ -5,6 +5,6 @@ export const profileProviders = [
   {
     provide: 'PROFILE_REPOSITORY',
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Profile),
-    inject: ['DATA_SOURCE'],
+    inject: ['DATA_SOURCE_HICABS_PORTAL'],
   },
 ];

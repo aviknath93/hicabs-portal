@@ -4,11 +4,22 @@ export const envValidationSchema = Joi.object({
   NODE_ENV: Joi.string()
     .valid('development', 'production', 'test')
     .default('development'),
-  DATABASE_HOST: Joi.string().required(),
-  DATABASE_PORT: Joi.number().default(3306),
-  DATABASE_USER: Joi.string().required(),
-  DATABASE_PASSWORD: Joi.string().required(),
-  DATABASE_NAME: Joi.string().required(),
+
+  // Hicabs Portal Database Configuration
+  HICABS_PORTAL_DB_HOST: Joi.string().required(),
+  HICABS_PORTAL_DB_PORT: Joi.number().default(3306),
+  HICABS_PORTAL_DB_USER: Joi.string().required(),
+  HICABS_PORTAL_DB_PASSWORD: Joi.string().required(),
+  HICABS_PORTAL_DB_NAME: Joi.string().required(),
+
+  // Hicabs Database Configuration
+  HICABS_DB_HOST: Joi.string().required(),
+  HICABS_DB_PORT: Joi.number().default(3306),
+  HICABS_DB_USER: Joi.string().required(),
+  HICABS_DB_PASSWORD: Joi.string().required(),
+  HICABS_DB_NAME: Joi.string().required(),
+
+  // Other Configurations
   JWT_SECRET: Joi.string().required(),
   EMAIL_SERVICE: Joi.string().required(),
   EMAIL_AUTH_USER: Joi.string().required(),

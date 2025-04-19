@@ -9,9 +9,9 @@ async function createDatabase(): Promise<void> {
   const configService = new ConfigService();
 
   const connection = await mysql.createConnection({
-    host: configService.get<string>('DATABASE_HOST'),
-    user: configService.get<string>('DATABASE_USER'),
-    password: configService.get<string>('DATABASE_PASSWORD'),
+    host: configService.get<string>('HICABS_PORTAL_DB_HOST'),
+    user: configService.get<string>('HICABS_PORTAL_DB_USER'),
+    password: configService.get<string>('HICABS_PORTAL_DB_PASSWORD'),
   });
 
   const databaseName: string =

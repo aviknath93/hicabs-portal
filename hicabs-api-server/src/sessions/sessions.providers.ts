@@ -5,6 +5,6 @@ export const sessionProviders = [
   {
     provide: 'SESSION_REPOSITORY',
     useFactory: (dataSource: DataSource) => dataSource.getRepository(Session),
-    inject: ['DATA_SOURCE'],
+    inject: ['DATA_SOURCE_HICABS_PORTAL'],
   },
 ];
