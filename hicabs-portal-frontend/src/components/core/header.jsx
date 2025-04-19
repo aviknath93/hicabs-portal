@@ -20,6 +20,7 @@ const Header = ({ handleDrawerToggle }) => {
   const navigateTo = useStore((state) => state.navigateTo);
   const isMobileOrTablet = useMediaQuery("(max-width:960px)");
   const logout = useStore((state) => state.logout);
+  const profileData = useStore((state) => state.profileData);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -58,9 +59,16 @@ const Header = ({ handleDrawerToggle }) => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           hicabs Portal
         </Typography>
-        <Box>
+        <Box display="flex" alignItems="center">
+          <Typography variant="body1" sx={{ mr: 2 }}>
+            Hi, {profileData.name || "User"}
+          </Typography>
           <IconButton color="inherit" onClick={handleAvatarClick}>
-            <Avatar sx={{ width: 32, height: 32 }}>H</Avatar>
+            <Avatar
+              sx={{ width: 32, height: 32 }}
+              src={profileData.profilePicture}
+              alt={profileData.name}
+            />
           </IconButton>
           <Menu
             anchorEl={anchorEl}

@@ -1,5 +1,5 @@
 // App.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import consts from "./utils/constants.json";
@@ -17,9 +17,19 @@ import AllBookings from "./pages/all-bookings";
 import ResetPassword from "./pages/reset-password";
 import ChangePassword from "./pages/change-password";
 import MyProfile from "./pages/my-profile";
+import useStore from "./utils/store";
 
 function App() {
   const { alert, clearAlert } = useAlertStore();
+
+  const { isAuthenticated, getProfile } = useStore();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      getProfile();
+    }
+  }, [isAuthenticated, getProfile]);
+
   return (
     <>
       {alert && (
